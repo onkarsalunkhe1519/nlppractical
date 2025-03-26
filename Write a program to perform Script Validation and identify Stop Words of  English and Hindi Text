@@ -1,0 +1,74 @@
+import nltk
+nltk.download('punkt')
+
+def detectLang(inText, charFlag=False, wordFlag=False, sentenceFlag=False, lang="EN"):
+    if charFlag:
+        if len(inText) == 1 and lang == "EN":
+            if ord(inText) in list(range(65, 123)):
+                return "EN"
+        if len(inText) == 1 and lang == "HI":
+            if ord(inText) in list(range(2304, 2432)):
+                return "HI"
+    
+    if wordFlag:
+        if len(inText) > 1 and lang == "EN":
+            for x in inText:
+                if ord(x) not in list(range(65, 123)):
+                    return "Not Found"
+            return "EN"
+        if len(inText) > 1 and lang == "HI":
+            for x in inText:
+                if ord(x) not in list(range(2304, 2432)):
+                    return "Not Found"
+            return "HI"
+    
+    if sentenceFlag:
+        if lang == "EN":
+            for word in inText.split():
+                for char in word:
+                    if ord(char) not in list(range(65, 123)) and not char.isspace() and not char.isdigit() and char not in ['.', ',', '!', '?']:
+                        return "Not Found"
+            return "EN"
+        elif lang == "HI":
+            for word in inText.split():
+                for char in word:
+                    if ord(char) not in list(range(2304, 2432)) and not char.isspace() and char not in ['.', ',', '!', '?']:
+                        return "Not Found"
+            return "HI"
+    return "Not Found"
+
+# Testing the script validation
+print(detectLang("This is a sample English sentence.", sentenceFlag=True, lang="EN"))
+print(detectLang("यह एक नमना ◌ू हद ◌ूं वाय है।", sentenceFlag=True, lang="HI"))
+print(detectLang("This is a mixed sentence with हद ◌ूं .", sentenceFlag=True, lang="EN"))
+print(detectLang("यह एक म त वाय हैिूजसमEnglish शद ह।", sentenceFlag=True, lang="HI"))
+
+
+
+
+
+
+
+
+import re
+
+# Example custom list of Hindi stopwords (expand as needed)
+hindi_stopwords = [
+    "यह", "और", "वह", "क", "है", "म", "हम", "नहं", "पर", "से", "के", "यहां", "वो", "को", 
+    "आद", "आप", "हम", "तो", "लेकन", "साथ", "हो", "म"
+]
+
+# Replace nltk stopwords with custom stopwords
+stop_words = set(hindi_stopwords)
+
+# Example Hindi sentence
+sentence = "आज रात आसमान मआधी ◌ूं चल सकती है,और हम शायद तार सेभरेआकाश को देखगे!"
+
+# Tokenize the sentence using regex (splits by spaces and punctuations)
+word_tokens = re.findall(r'\w+|\s+|[^\w\s]', sentence)
+
+# Filter out stopwords
+filtered_sentence = [word for word in word_tokens if word not in stop_words]
+
+print("Original Sentence:", sentence)
+print("Filtered Sentence (Stopwords removed):", ' '.join(filtered_sentence))
