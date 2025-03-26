@@ -1,0 +1,68 @@
+import re
+
+# Sample Hindi Text
+text = "पशहमारेपयावरणु का महवपण ू णहसा हऔर वेवभन कार के होतहे, जसै ◌ूेक पालतपश और जंगल जानवर।"
+
+# Tokenization Function
+def tokenize_text(text):
+    # Split text by spaces or punctuations using regex
+    tokens = re.findall(r'\w+|\s+|[^\w\s]', text, re.UNICODE)
+    return tokens
+
+# Word Tokenization
+word_tokens = tokenize_text(text)
+print("Word Tokenization:", word_tokens)
+
+# Sentence Tokenization (Using regex to split by punctuation marks)
+def sentence_tokenize(text):
+    sentences = re.split(r'(?<=[.!?]) +', text)  # Splits sentences based on punctuations
+    return sentences
+
+# Example Sentence Tokenization
+text_hindi = "पवी ◌ू हमारेसौरमंडल का तीसरा ह है, जहााँजीवन संभव है।"
+sentences = sentence_tokenize(text_hindi)
+print("Sentence Tokenization:", sentences)
+
+
+
+
+
+
+
+import re
+
+# Filtration Function for English and Hindi Text
+def filter_text(inText, lowerFlag=False, upperFlag=False, 
+                numberFlag=False, htmlFlag=False, urlFlag=False, 
+                punctFlag=False, spaceFlag=False, hashtagFlag=False, emojiFlag=False):
+    
+    if lowerFlag:
+        inText = inText.lower()
+    if upperFlag:
+        inText = inText.upper()
+    if numberFlag:
+        inText = re.sub(r"\d+", '', inText)
+    if htmlFlag:
+        inText = re.sub(r'<[^>]*>', '', inText)
+    if urlFlag:
+        inText = re.sub(r'(https?|ftp|www)\S+', '', inText)
+    if punctFlag:
+        inText = re.sub(r'[^\w\s\'’-]', '', inText)
+    if spaceFlag:
+        inText = re.sub(' +', " ", inText).strip()
+    if hashtagFlag:
+        inText = re.sub(r'#\w+', '', inText)
+    if emojiFlag:
+        emoji_pattern = re.compile("[" u"\U0001F600-\U0001F64F" 
+                                    u"\U0001F300-\U0001F5FF" u"\U0001F680-\U0001F6FF" 
+                                    u"\U0001F1E0-\U0001F1FF" u"\U00002702-\U000027B0" 
+                                    u"\U000024C2-\U0001F251" "]+", flags=re.UNICODE)
+        inText = emoji_pattern.sub(r'', inText)
+    
+    return inText
+
+# Example of text filtration
+usrText = input("Enter text to filter: ")
+filtered_text = filter_text(usrText, punctFlag=True, upperFlag=True, 
+                            spaceFlag=True, numberFlag=True, hashtagFlag=True, emojiFlag=True)
+print("Filtered Text:", filtered_text)
