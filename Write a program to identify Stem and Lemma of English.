@@ -1,0 +1,45 @@
+#Write a program to identify Stem and Lemma of English.  
+
+import spacy
+from nltk.stem import SnowballStemmer
+
+# Load English and Hindi SpaCy models (if not already loaded)
+try:
+    nlp_en = spacy.load("en_core_web_sm")
+    nlp_hi = spacy.load("xx_ent_wiki_sm")
+except OSError:
+    !python -m spacy download en_core_web_sm
+    !python -m spacy download xx_ent_wiki_sm
+    nlp_en = spacy.load("en_core_web_sm")
+    nlp_hi = spacy.load("xx_ent_wiki_sm")
+
+# Define perform_stemming function
+def perform_stemming(sentence, lang='en'):
+    if lang == 'en':
+        stemmer = SnowballStemmer('english')  # Use SnowballStemmer for English
+    else:
+        stemmer = SnowballStemmer('english')  # For Hindi, consider using a Hindi-specific stemmer
+    
+    # Tokenize sentence using SpaCy
+    doc = nlp_en(sentence) if lang == 'en' else nlp_hi(sentence)
+    words = [token.text for token in doc]
+    return ' '.join([stemmer.stem(word) for word in words])
+
+# Define perform_lemmatization function
+def perform_lemmatization(sentence, lang='en'):
+    doc = nlp_en(sentence) if lang == 'en' else nlp_hi(sentence)  # Use appropriate SpaCy model
+    return ' '.join([token.lemma_ for token in doc])
+
+# Example sentences
+english_sentence = "The quick brown foxes are jumping over the lazy dogs."
+hindi_sentence = "तज़े भर ◌ू लोमड़यााँआलसी कु पर क द रह ह।"
+
+# Perform stemming and lemmatization for English
+print("English Sentence: ", english_sentence)
+print("Stemming (English): ", perform_stemming(english_sentence, 'en'))
+print("Lemmatization (English): ", perform_lemmatization(english_sentence, 'en'))
+
+# Perform stemming and lemmatization for Hindi
+print("\nHindi Sentence: ", hindi_sentence)
+print("Stemming (Hindi): ", perform_stemming(hindi_sentence, 'hi'))
+print("Lemmatization (Hindi): ", perform_lemmatization(hindi_sentence, 'hi'))
