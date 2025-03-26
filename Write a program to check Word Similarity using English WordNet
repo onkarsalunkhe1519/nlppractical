@@ -1,0 +1,37 @@
+#  Write a program to check Word Similarity using English WordNet 
+!pip install nltk indic-nlp-library googletrans==4.0.0-rc1
+
+# Import necessary libraries
+import nltk
+from googletrans import Translator
+from nltk.corpus import wordnet as wn
+
+# Download necessary NLTK data
+nltk.download('wordnet')
+nltk.download('omw-1.4')
+
+# Initialize Google Translator for transliteration
+translator = Translator()
+
+# Hindi words to compare
+word1_hindi = "ऑटोमोबाइल"  # "Automobile" in Hindi
+word2_hindi = "कार"        # "Car" in Hindi
+
+# Transliterate Hindi words to English (simplified version using Google Translate)
+word1_english = translator.translate(word1_hindi, src='hi', dest='en').text
+word2_english = translator.translate(word2_hindi, src='hi', dest='en').text
+
+# Print the transliterated English words
+print(f"Transliterated '{word1_hindi}' to English: {word1_english}")
+print(f"Transliterated '{word2_hindi}' to English: {word2_english}")
+
+# Get synsets for the English words
+synsets1 = wn.synsets(word1_english)
+synsets2 = wn.synsets(word2_english)
+
+# Check similarity between first synsets (basic approach)
+if synsets1 and synsets2:
+    similarity = synsets1[0].path_similarity(synsets2[0])
+    print(f"Path similarity between '{word1_hindi}' and '{word2_hindi}': {similarity}")
+else:
+    print("No synsets found for these words.")
