@@ -1,0 +1,66 @@
+#Write a program to generate n-gram (Unigram, bigram, trigram,etc) of English and Hindi Text.
+import nltk
+from nltk.util import ngrams
+from collections import defaultdict
+
+# Sample English and Hindi Corpus for demonstration
+english_corpus = [
+    "I am learning natural language processing.",
+    "N-grams are useful in many NLP applications.",
+    "Language models are used in speech recognition."
+]
+
+hindi_corpus = [
+    "यह एक साधारण वाय है",
+    "यह दसरा ◌ू वाय है",
+    "हमने तीसरा वाय लिखा है",
+    "यह एक अच्छा मौका है",
+    "यह एक महत्वपूर्ण समय है",
+    "यह एक यार कहानी है"
+]
+
+# Function to generate n-grams (unigrams, bigrams, trigrams)
+def generate_ngrams(corpus, n=1):
+    ngram_list = []
+    for sentence in corpus:
+        words = sentence.split()  # Simple space-based tokenization
+        ngram_list.extend(list(ngrams(words, n)))  # Create n-grams from sentence
+    return ngram_list
+
+# Generate Unigrams, Bigrams, and Trigrams for English
+unigrams_en = generate_ngrams(english_corpus, n=1)
+bigrams_en = generate_ngrams(english_corpus, n=2)
+trigrams_en = generate_ngrams(english_corpus, n=3)
+
+# Generate Unigrams, Bigrams, and Trigrams for Hindi
+unigrams_hi = generate_ngrams(hindi_corpus, n=1)
+bigrams_hi = generate_ngrams(hindi_corpus, n=2)
+trigrams_hi = generate_ngrams(hindi_corpus, n=3)
+
+# Displaying some results
+print("Unigrams (English):", unigrams_en[:5])
+print("Bigrams (English):", bigrams_en[:5])
+print("Trigrams (English):", trigrams_en[:5])
+
+print("\nUnigrams (Hindi):", unigrams_hi[:5])
+print("Bigrams (Hindi):", bigrams_hi[:5])
+print("Trigrams (Hindi):", trigrams_hi[:5])
+# Create a trigram model for Hindi
+model = defaultdict(lambda: defaultdict(lambda: 0))
+
+# Tokenize and count trigram frequencies
+for sentence in hindi_corpus:
+    tokens = sentence.split()  # Simple space-based tokenization for Hindi
+    for w1, w2, w3 in ngrams(tokens, 3, pad_left=True, pad_right=True):
+        model[(w1, w2)][w3] += 1
+
+# Let's transform the counts into probabilities
+for w1_w2 in model:
+    total_count = float(sum(model[w1_w2].values()))
+    for w3 in model[w1_w2]:
+        model[w1_w2][w3] /= total_count
+
+# Example: Checking the trigram probabilities
+print("\nTrigram Model (Example Probabilities):")
+print(dict(model[("यह", "एक")]))  # Checking for trigram after ("यह", "एक")
+print(dict(model[("एक", "अच्छा")]))  # Checking for trigram after ("एक", "अच्छा")
