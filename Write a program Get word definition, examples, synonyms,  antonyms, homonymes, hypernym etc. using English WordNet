@@ -1,0 +1,70 @@
+#Write a program Get word definition, examples, synonyms, antonyms, homonymes, hypernym etc. using English WordNet
+
+import nltk
+from nltk.corpus import wordnet as wn
+
+# Download necessary NLTK data
+nltk.download('wordnet')
+nltk.download('omw-1.4')
+nltk.download('punkt')
+
+# Function to get WordNet details
+def get_word_details(word):
+    # Synsets (all senses of the word)
+    synsets = wn.synsets(word)
+    print(f"Synsets for '{word}':")
+    for synset in synsets:
+        print(f"{synset.name()}: {synset.definition()}")
+        print("Examples:", synset.examples())
+        print()
+
+    # Lemmas (words in the synset)
+    print(f"Lemmas for the first synset of '{word}':")
+    if synsets:
+        for lemma in synsets[0].lemmas():
+            print(lemma.name())
+    print()
+
+    # Antonyms of the first synset's lemmas
+    print(f"Antonyms for '{word}':")
+    antonyms = []
+    if synsets:
+        for lemma in synsets[0].lemmas():
+            if lemma.antonyms():
+                antonyms.append(lemma.antonyms()[0].name())
+    print(set(antonyms))
+    print()
+
+    # Hypernyms (more general terms)
+    print(f"Hypernyms for '{word}':")
+    if synsets:
+        for hypernym in synsets[0].hypernyms():
+            print(hypernym.name())
+    print()
+
+    # Hyponyms (more specific terms)
+    print(f"Hyponyms for '{word}':")
+    if synsets:
+        for hyponym in synsets[0].hyponyms():
+            print(hyponym.name())
+    print()
+
+    # Meronyms (part-whole relations)
+    print(f"Meronyms for '{word}':")
+    if synsets:
+        for meronym in synsets[0].part_meronyms():
+            print(meronym.name())
+    print()
+
+    # Holonyms (whole-part relations)
+    print(f"Holonyms for '{word}':")
+    if synsets:
+        for holonym in synsets[0].substance_meronyms():
+            print(holonym.name())
+    print()
+
+# Example usage:
+get_word_details("dog")
+get_word_details("run")
+get_word_details("happy")
+get_word_details("cat")
