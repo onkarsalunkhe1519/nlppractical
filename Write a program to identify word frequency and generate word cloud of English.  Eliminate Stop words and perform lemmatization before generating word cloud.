@@ -1,0 +1,65 @@
+#Write a program to identify word frequency and generate word cloud of English. Eliminate Stop words and perform lemmatization before generating word cloud. 
+# Install wikipediaapi if not installed
+!pip install wikipedia-api
+
+import wikipediaapi
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+import re
+import os
+
+# Download necessary NLTK data
+nltk.download('stopwords')
+nltk.download('wordnet')
+nltk.download('omw-1.4')
+nltk.download('punkt')
+
+# Function to fetch Wikipedia content
+def fetch_wikipedia_content(lang, title):
+    user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    wiki_wiki = wikipediaapi.Wikipedia(language=lang, user_agent=user_agent)
+    page = wiki_wiki.page(title)
+    return page.text if page.exists() else ""
+
+# Function to generate WordCloud
+def generate_wordcloud(text, lang, title):
+    # Use font for Hindi/Marathi
+    font_path = "/usr/share/fonts/truetype/noto/NotoSansDevanagari-Regular.ttf" if lang in ['mr', 'hi'] else None
+    wordcloud = WordCloud(width=800, height=400, background_color='white', font_path=font_path).generate(text)
+    plt.figure(figsize=(10, 5))
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis("off")
+    plt.title(f'Word Cloud for {title} in {lang}')
+    plt.show()
+
+# Function to clean text (remove punctuation, stopwords, and lemmatize)
+def clean_text(text, lang):
+    text = re.sub(r'[^\w\s]', '', text)  # Remove punctuation
+    words = text.split()
+
+    if lang == 'en':
+        stop_words = set(stopwords.words('english'))
+        lemmatizer = WordNetLemmatizer()
+        words = [lemmatizer.lemmatize(word.lower()) for word in words if word.lower() not in stop_words]
+
+    return " ".join(words)
+
+# Install font if running on Google Colab (for Marathi/Hindi Word Cloud)
+if 'google.colab' in str(get_ipython()):
+    !apt-get install -y fonts-noto
+
+# Task 1: Marathi / Hindi Word Cloud
+title_mr = "मबई"  # Marathi title for Mumbai
+marathi_text = fetch_wikipedia_content("mr", title_mr)
+if marathi_text:
+    generate_wordcloud(marathi_text, "mr", title_mr)
+
+# Task 2: English Word Cloud with Stopword Removal and Lemmatization
+title_en = "Mumbai"  # English title for Mumbai
+english_text = fetch_wikipedia_content("en", title_en)
+if english_text:
+    cleaned_text = clean_text(english_text, "en")
+    generate_wordcloud(cleaned_text, "en", title_en)
